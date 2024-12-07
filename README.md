@@ -3,21 +3,21 @@
 使用方法：
 
 安装/install：
-
-      wget  https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/install.sh && bash install.sh && rm -rf install.sh
-
+```
+wget  https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/install.sh && bash install.sh && rm -rf install.sh
+```
 
 # 纯官方版，无任何改动,可以放心使用，里面除了修改下载脚本为github连接以外没修改任何文件，一个字母都没动过，脚本里面的多余端口删除了，下面有说明，我自己也在用，因为这个是最后一个6开头的版本了，下一个版本就是7开头的了，破解难度加大了
 
 
 删除默认添加的以下端口
-
-            ufw allow 20/tcp
-            ufw allow 21/tcp
-            ufw allow 22/tcp
-            ufw allow 888/tcp
-            ufw allow 39000:40000/tcp
-
+```
+ufw allow 20/tcp
+ufw allow 21/tcp
+ufw allow 22/tcp
+ufw allow 888/tcp
+ufw allow 39000:40000/tcp
+```
 默认只添加80,443,ssh端口和面板端口
 
 # nginx安装
@@ -31,7 +31,7 @@ ModSecurity-nginx-http3.sh是新版，最高支持1.26，默认开启http3，并
 ModSecurity-nginx-http3.sh 使用方法：<br>
 
 ```
- rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/refs/heads/main/ModSecurity-nginx-http3.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.26
+rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/refs/heads/main/ModSecurity-nginx-http3.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.26
  ```
 <br>
 
@@ -49,9 +49,9 @@ modsecurity on;
 ```
 在网站配置文件里面添加<br>
 ```
-    # Enable ModSecurity
-    modsecurity on;
-    modsecurity_rules_file /www/server/nginx/owasp/conf/main.conf;
+# Enable ModSecurity
+modsecurity on;
+modsecurity_rules_file /www/server/nginx/owasp/conf/main.conf;
 ```
 这样你的网站已经初步开启owasp防火墙了，然后就是后面的调试工作，遇到403错误就查看网站日志文件进行规则调试
 <br>
@@ -59,9 +59,9 @@ modsecurity on;
 # nginx-1.24版本 brotli版
 nginx.sh 基于BT官方文件修改了一下，文件里面有详细解释，主要是以优化和加强安全为主，添加了brotli模块，修改响应的头信息server字段值，将nginx修改成自定义字段和自定义版本号<br>
 nginx.sh 使用方法：
-
-     rm -f /www/server/panel/install/nginx.sh && wget -O /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
-
+```
+rm -f /www/server/panel/install/nginx.sh && wget -O /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
+```
 注意修改命令尾部的版本号，默认安装 nginx 1.24
 <br><br>
 
@@ -69,10 +69,9 @@ nginx.sh 使用方法：
 
 ModSecurity-nginx.sh是旧版最高支持1.24，默认安装1.24
 
-
 ModSecurity-nginx.sh 使用方法：
 ```
-     rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/ModSecurity-nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
+rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/ModSecurity-nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
 ```
 
 # 下面是对于ModSecurity一些说明和优化细节
@@ -112,22 +111,22 @@ OWASP CRS rules 规则文件默认下载的最版
 ####使用说明####
 
 根据<a href="https://www.netnea.com/cms/nginx-tutorial-6_embedding-modsecurity/"  target="_blank">官方文档</a>步骤五在nginx.conf文件添加引入。将以下代码添加在worker_rlimit_nofile 51200;下面即可引入
-
-     load_module /www/server/nginx/modules/ngx_http_modsecurity_module.so;
-
+```
+load_module /www/server/nginx/modules/ngx_http_modsecurity_module.so;
+```
 根据<a href="https://www.netnea.com/cms/nginx-tutorial-6_embedding-modsecurity/"  target="_blank">官方文档</a>骤5建议在http模块内添加以下代码全局开启
-
-     modsecurity on;
-
+```
+modsecurity on;
+```
 
 编辑规则全局引入文件。这里面可以引入你需要的规则
 文件路径： /www/server/nginx/owasp/conf/main.conf
 
 在你的网站配置文件内添加以下代码
-
-     modsecurity on;
-     modsecurity_rules_file /www/server/nginx/owasp/conf/main.conf;
-
+```
+modsecurity on;
+modsecurity_rules_file /www/server/nginx/owasp/conf/main.conf;
+```
 然后编辑/www/server/nginx/owasp/conf/main.conf文件在里面引入你需要的规则文件即可
 
 所有国则文件都在/www/server/nginx/owasp/owasp-rules/rules里面
