@@ -863,13 +863,25 @@ Install_Configure() {
 
     cd ${Setup_Path}/src
 
+    # if [ "${GMSSL}" ];then
+    # 	sed -i "s/$OPENSSL\/.openssl\//$OPENSSL\//g" auto/lib/openssl/conf
+    # fi
+
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/${LUAJIT_INC_PATH}/
     export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
     
     # 规范文件权限防止出现无效用户文件
+    # 因为宝塔文件设置并不严谨必须修改
+    # 根据CIS NGINX 基准测试v2.1.0的2.3.1
+    # 将所有权仅设置为 root 组和 root 用户中的用户将减少对 nginx 配置文件进行未经授权修改的可能性。
     chown -R root:root /www/server/nginx/src
     
+    # 删除弃用的ipv6
+    # 删除自带的webdav模块 ${ENABLE_WEBDAV}
+    # 添加优化参数 --with-threads --with-file-aio  --with-cc-opt='-O2 -fPIE --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' --with-ld-opt='-Wl,-E -Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
+    # 添加ngx_brotli模块 --add-module=/www/server/nginx/src/ngx_brotli
+    # 添加ModSecurity-nginx静态模块 --add-module=/www/server/nginx/owasp/ModSecurity-nginx 如果需要根据官方文档编译成动态模块修改成 --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx 动态模块需要根据官方文档引入.so文件
     ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --add-module=/www/server/nginx/src/nginx_rtmp_module --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ENABLE_RTMP} ${ADD_EXTENSION} ${i_make_args} 2>&1 | tee /tmp/nginx_config.pl
     make -j${cpuCore} 2>&1 | tee /tmp/nginx_make.pl
 }
