@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # aapanel-6.8.37-backup
 
 使用方法：
@@ -141,3 +142,7 @@ OWASP CRS rules 规则文件默认下载的最版
 
 # 关于错误
 这个脚本测试过很多次，保证没有错误，如果安装过程中出现错误或者后台出现错误大部分原因是因为宝塔服务器出现了问题，请过20分钟到一小时后重新安装即可
+=======
+# aapanel-6.8.37-setup
+aapanel(宝塔面板)开启ModSecurity（OWSP CRS）brotli http3
+>>>>>>> d9ecab14ba7aea50ad0291740262935b5707a099
