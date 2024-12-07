@@ -270,6 +270,7 @@ System_Lib() {
     fi
 }
 
+
 Service_Add() {
     if [ "${PM}" == "yum" ] || [ "${PM}" == "dnf" ]; then
         chkconfig --add nginx
@@ -408,6 +409,7 @@ Download_Src() {
         tar -xvf src.tar.gz
         mv ${version}-${nginxVersion} src
 
+
     # 规范文件权限防止出现无效用户文件
     # 因为宝塔文件设置并不严谨必须修改
     # 根据CIS NGINX 基准测试v2.1.0的2.3.1
@@ -462,7 +464,6 @@ fi
         wget -O ${Setup_Path}/src.tar.gz ${download_Url}/src/nginx-${nginxVersion}.tar.gz -T20
         tar -xvf src.tar.gz
         mv nginx-${nginxVersion} src
-
     # 规范文件权限防止出现无效用户文件
     # 因为宝塔文件设置并不严谨必须修改
     # 根据CIS NGINX 基准测试v2.1.0的2.3.1
@@ -872,6 +873,7 @@ Install_Configure() {
     ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --add-module=/www/server/nginx/src/nginx_rtmp_module --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ENABLE_RTMP} ${ADD_EXTENSION} ${i_make_args} 2>&1 | tee /tmp/nginx_config.pl
     make -j${cpuCore} 2>&1 | tee /tmp/nginx_make.pl
 }
+
 Install_Nginx() {
     make install 2>&1|tee /tmp/nginx_install.pl
     ############################### 根据官方文档定义文件权限 #########################################
@@ -1363,4 +1365,3 @@ else
         Update_Nginx
     fi
 fi
-
