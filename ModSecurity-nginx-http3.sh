@@ -867,6 +867,9 @@ Install_Configure() {
     make -j${cpuCore} 2>&1|tee /tmp/nginx_make.pl
 }
 Install_Nginx() {
+    # 确保目录存在
+    mkdir -p /www/server/nginx/modules
+
     make install 2>&1|tee /tmp/nginx_install.pl
     ############################### 根据官方文档定义文件权限 #########################################
         chmod 750 /www/server/nginx/modules
