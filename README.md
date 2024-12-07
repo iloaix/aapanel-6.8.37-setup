@@ -1,4 +1,4 @@
-# aapanel-6.8.37-backup
+# aapanel-6.8.37-setup
 
 使用方法：
 
