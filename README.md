@@ -31,13 +31,13 @@ ModSecurity-nginx-http3.sh是新版，最高支持1.26，默认开启http3，并
 ModSecurity-nginx-http3.sh 使用方法：<br>
 
 ```
- rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/mzwrt/aapanel-6.8.37-backup/refs/heads/main/ModSecurity-nginx-http3.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.26
+ rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/refs/heads/main/ModSecurity-nginx-http3.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.26
  ```
 <br>
 
 # ModSecurity防火墙开启脚本
 ```
-wget -O /tmp/enable.sh https://raw.githubusercontent.com/mzwrt/aapanel-6.8.37-backup/refs/heads/main/ModSecurity/enable.sh && bash /tmp/enable.sh && rm -rf /tmp/enable.sh
+wget -O /tmp/enable.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/refs/heads/main/ModSecurity/enable.sh && bash /tmp/enable.sh && rm -rf /tmp/enable.sh
 ```
 脚本运行完成以后在宝塔后台nginx配置文件`worker_rlimit_nofile 51200;`下面添加<br>
 ```
@@ -60,7 +60,7 @@ modsecurity on;
 nginx.sh 基于BT官方文件修改了一下，文件里面有详细解释，主要是以优化和加强安全为主，添加了brotli模块，修改响应的头信息server字段值，将nginx修改成自定义字段和自定义版本号<br>
 nginx.sh 使用方法：
 
-     rm -f /www/server/panel/install/nginx.sh && wget -O /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/mzwrt/aapanel-6.8.37-backup/main/nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
+     rm -f /www/server/panel/install/nginx.sh && wget -O /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
 
 注意修改命令尾部的版本号，默认安装 nginx 1.24
 <br><br>
@@ -72,7 +72,7 @@ ModSecurity-nginx.sh是旧版最高支持1.24，默认安装1.24
 
 ModSecurity-nginx.sh 使用方法：
 ```
-     rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/mzwrt/aapanel-6.8.37-backup/main/ModSecurity-nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
+     rm -f /www/server/panel/install/nginx.sh && wget -O  /www/server/panel/install/nginx.sh https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/ModSecurity-nginx.sh -T 20 && bash /www/server/panel/install/nginx.sh install 1.24
 ```
 
 # 下面是对于ModSecurity一些说明和优化细节
@@ -141,7 +141,3 @@ OWASP CRS rules 规则文件默认下载的最版
 
 # 关于错误
 这个脚本测试过很多次，保证没有错误，如果安装过程中出现错误或者后台出现错误大部分原因是因为宝塔服务器出现了问题，请过20分钟到一小时后重新安装即可
-=======
-# aapanel-6.8.37-setup
-aapanel(宝塔面板)开启ModSecurity（OWSP CRS）brotli http3
->>>>>>> d9ecab14ba7aea50ad0291740262935b5707a099
