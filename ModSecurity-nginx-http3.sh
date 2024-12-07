@@ -244,6 +244,7 @@ System_Lib() {
     if [ "${PM}" == "yum" ] || [ "${PM}" == "dnf" ]; then
         Pack="gcc gcc-c++ curl curl-devel libtermcap-devel ncurses-devel libevent-devel readline-devel libuuid-devel gd-devel libxml2-devel libxslt-devel libmaxminddb-devel"
         ${PM} install ${Pack} -y
+        ${PM} install cmake -y
         yum install zlib-devel -y
         yum -y install gcc gcc-c++ autoconf automake
         yum reinstall gd gd-devel -y 2>&1 >> /tmp/pack_i.pl
@@ -252,6 +253,7 @@ System_Lib() {
         nohup bash fix_install.sh > /www/server/panel/install/fix.log 2>&1 &
     elif [ "${PM}" == "apt-get" ]; then
         apt-get update
+        apt-get install -y cmake
         LIBCURL_VER=$(dpkg -l | grep libx11-6 | awk '{print $3}')
         if [ "${LIBCURL_VER}" == "2:1.6.9-2ubuntu1.3" ]; then
             apt remove libx11* -y
@@ -779,8 +781,9 @@ rm -f lua-nginx-module-${LuaModVer}.zip
     cd ${Setup_Path}/src
 
     # 下载并解压nginx-rtmp-module
-    git clone https://github.com/arut/nginx-rtmp-module.git
-    mv nginx-rtmp-module nginx-rtmp-module
+    wget -O nginx-rtmp-module.zip https://github.com/arut/nginx-rtmp-module/archive/master.zip
+    unzip -o nginx-rtmp-module.zip
+    mv nginx-rtmp-module-master nginx-rtmp-module
     rm -f nginx-rtmp-module.zip
 }
 Install_Configure() {
@@ -863,13 +866,16 @@ Install_Configure() {
     # 添加ngx_brotli模块 --add-module=/www/server/nginx/src/ngx_brotli
     # 添加ModSecurity-nginx静态模块 --add-module=/www/server/nginx/owasp/ModSecurity-nginx 如果需要根据官方文档编译成动态模块修改成 --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx 动态模块需要根据官方文档引入.so文件
 
-    ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx --add-module=/www/server/nginx/src/nginx-rtmp-module ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ADD_EXTENSION} ${i_make_args} 2>&1|tee /tmp/nginx_config.pl
+    ./configure --user=www --group=www --with-threads --with-file-aio \
+    --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 -march=native -mtune=native -Wno-error=date-time' \
+    --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx --add-module=/www/server/nginx/src/nginx-rtmp-module ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ADD_EXTENSION} ${i_make_args} 2>&1|tee /tmp/nginx_config.pl
     make -j${cpuCore} 2>&1|tee /tmp/nginx_make.pl
 }
 Install_Nginx() {
     # 确保目录存在
     mkdir -p /www/server/nginx/modules
-
+    mkdir -p /www/backup
+    
     make install 2>&1|tee /tmp/nginx_install.pl
     ############################### 根据官方文档定义文件权限 #########################################
         chmod 750 /www/server/nginx/modules
