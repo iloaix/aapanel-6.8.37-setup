@@ -129,7 +129,7 @@ modsecurity_rules_file /www/server/nginx/owasp/conf/main.conf;
 ```
 然后编辑/www/server/nginx/owasp/conf/main.conf文件在里面引入你需要的规则文件即可
 
-所有国则文件都在/www/server/nginx/owasp/owasp-rules/rules里面
+所有规则文件都在/www/server/nginx/owasp/owasp-rules/rules里面
 
 /www/server/nginx/owasp/conf/nginx-wordpress.conf文件是针对wordpress程序的一些常用拒绝规则，需要在网站的nginx配置文件里面引入
 
