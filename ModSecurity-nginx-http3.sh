@@ -242,7 +242,7 @@ Error_Send(){
 }
 System_Lib() {
     if [ "${PM}" == "yum" ] || [ "${PM}" == "dnf" ]; then
-        Pack="gcc gcc-c++ curl curl-devel libtermcap-devel ncurses-devel libevent-devel readline-devel libuuid-devel gd-devel libxml2-devel libxslt-devel"
+        Pack="gcc gcc-c++ curl curl-devel libtermcap-devel ncurses-devel libevent-devel readline-devel libuuid-devel gd-devel libxml2-devel libxslt-devel libmaxminddb-devel"
         ${PM} install ${Pack} -y
         yum install zlib-devel -y
         yum -y install gcc gcc-c++ autoconf automake
@@ -261,7 +261,7 @@ System_Lib() {
 	########################### 安装ModSecurity必备软件包 ####################################################
 	sudo apt install -y apt-utils autoconf automake build-essential git ssdeep libpcre2-dev libpcre2-8-0  libcurl4-openssl-dev libgeoip-dev liblmdb-dev libtool libxml2-dev libyajl-dev pkgconf wget zlib1g-dev liblua5.3-dev libmaxminddb0 libmaxminddb-dev
 
-        Pack="gcc g++ libgd3 libgd-dev libevent-dev libncurses5-dev libreadline-dev uuid-dev"
+        Pack="gcc g++ libgd3 libgd-dev libevent-dev libncurses5-dev libreadline-dev uuid-dev libmaxminddb-dev"
         ${PM} install ${Pack} -y
         apt-get install libxslt1-dev -y 2>&1 >> /tmp/pack_i.pl
         apt-get install libgd-dev -y 2>&1 >> /tmp/pack_i.pl
@@ -774,6 +774,14 @@ rm -f lua-nginx-module-${LuaModVer}.zip
             rm -f ngx-pagespeed-${NGX_PAGESPEED_VAR}.tar.gz
         fi
     fi
+
+    # 在Download_Src()函数中添加nginx-rtmp-module下载和解压
+    cd ${Setup_Path}/src
+
+    # 下载并解压nginx-rtmp-module
+    git clone https://github.com/arut/nginx-rtmp-module.git
+    mv nginx-rtmp-module nginx-rtmp-module
+    rm -f nginx-rtmp-module.zip
 }
 Install_Configure() {
     Run_User="www"
@@ -855,7 +863,7 @@ Install_Configure() {
     # 添加ngx_brotli模块 --add-module=/www/server/nginx/src/ngx_brotli
     # 添加ModSecurity-nginx静态模块 --add-module=/www/server/nginx/owasp/ModSecurity-nginx 如果需要根据官方文档编译成动态模块修改成 --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx 动态模块需要根据官方文档引入.so文件
 
-    ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ADD_EXTENSION} ${i_make_args} 2>&1|tee /tmp/nginx_config.pl
+    ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx --add-module=/www/server/nginx/src/nginx-rtmp-module ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ADD_EXTENSION} ${i_make_args} 2>&1|tee /tmp/nginx_config.pl
     make -j${cpuCore} 2>&1|tee /tmp/nginx_make.pl
 }
 Install_Nginx() {
