@@ -242,12 +242,12 @@ Error_Send(){
 }
 System_Lib() {
     if [ "${PM}" == "yum" ] || [ "${PM}" == "dnf" ]; then
-        Pack="gcc gcc-c++ curl curl-devel libtermcap-devel ncurses-devel libevent-devel readline-devel libuuid-devel gd-devel libxml2-devel libxslt-devel pkgconf wget zlib1g-devel liblua5.3-devel libmaxminddb0 libmaxminddb-devel gd-devel libgeoip-devel"
+        Pack="gcc gcc-c++ curl curl-devel libtermcap-devel ncurses-devel libevent-devel readline-devel libuuid-devel gd-devel libxml2-devel libxslt-devel"
         ${PM} install ${Pack} -y
         yum install zlib-devel -y
         yum -y install gcc gcc-c++ autoconf automake
         yum reinstall gd gd-devel -y 2>&1 >> /tmp/pack_i.pl
-        ls /usr/include/gd.h /usr/lib64/libgd.so.3  2>&1 | tee /tmp/gd_i.pl
+        ls /usr/include/gd.h /usr/lib64/libgd.so.3  2>&1 |tee /tmp/gd_i.pl
         wget -O fix_install.sh $download_Url/tools/fix_install.sh
         nohup bash fix_install.sh > /www/server/panel/install/fix.log 2>&1 &
     elif [ "${PM}" == "apt-get" ]; then
@@ -258,18 +258,18 @@ System_Lib() {
             apt install libx11-6 libx11-dev libx11-data -y
         fi
         apt-get update -y
-        ########################### 安装ModSecurity必备软件包 ####################################################
-        sudo apt install -y apt-utils autoconf automake build-essential git ssdeep libpcre2-dev libpcre2-8-0 libcurl4-openssl-dev libgeoip-dev liblmdb-dev libtool libxml2-dev libyajl-dev pkgconf wget zlib1g-dev liblua5.3-dev libmaxminddb0 libmaxminddb-devel
-    
-        Pack="gcc g++ libgd3 libgd-dev libevent-dev libncurses5-dev libreadline-dev uuid-dev libmaxminddb-devel"
+	########################### 安装ModSecurity必备软件包 ####################################################
+	sudo apt install -y apt-utils autoconf automake build-essential git ssdeep libpcre2-dev libpcre2-8-0  libcurl4-openssl-dev libgeoip-dev liblmdb-dev libtool libxml2-dev libyajl-dev pkgconf wget zlib1g-dev liblua5.3-dev libmaxminddb0 libmaxminddb-dev
+
+        Pack="gcc g++ libgd3 libgd-dev libevent-dev libncurses5-dev libreadline-dev uuid-dev"
         ${PM} install ${Pack} -y
         apt-get install libxslt1-dev -y 2>&1 >> /tmp/pack_i.pl
         apt-get install libgd-dev -y 2>&1 >> /tmp/pack_i.pl
         apt-get install libxml2-dev -y 2>&1 >> /tmp/pack_i.pl
         apt-get install zlib1g-dev -y 
     fi
-}
 
+}
 
 Service_Add() {
     if [ "${PM}" == "yum" ] || [ "${PM}" == "dnf" ]; then
@@ -409,7 +409,6 @@ Download_Src() {
         tar -xvf src.tar.gz
         mv ${version}-${nginxVersion} src
 
-
     # 规范文件权限防止出现无效用户文件
     # 因为宝塔文件设置并不严谨必须修改
     # 根据CIS NGINX 基准测试v2.1.0的2.3.1
@@ -463,7 +462,9 @@ fi
     else
         wget -O ${Setup_Path}/src.tar.gz ${download_Url}/src/nginx-${nginxVersion}.tar.gz -T20
         tar -xvf src.tar.gz
+        tar -xvf src.tar.gz
         mv nginx-${nginxVersion} src
+
     # 规范文件权限防止出现无效用户文件
     # 因为宝塔文件设置并不严谨必须修改
     # 根据CIS NGINX 基准测试v2.1.0的2.3.1
@@ -516,32 +517,6 @@ fi
     fi
 
     cd src
-
-    ################# 新增下载 nginx-rtmp-module ###################
-    wget -O nginx-rtmp-module.tar.gz https://github.com/arut/nginx-rtmp-module/archive/refs/tags/v1.2.1.tar.gz
-    tar -xvf nginx-rtmp-module.tar.gz
-    mv nginx-rtmp-module-1.2.1 nginx_rtmp_module
-    rm -f nginx-rtmp-module.tar.gz
-    ##############################################################
-
-    ################# 添加 nginx-rtmp-module 模块 ######################
-    # 下载并解压 ngx_cache_purge、nginx-sticky-module 等模块
-    wget -O ngx_cache_purge.tar.gz ${download_Url}/src/ngx_cache_purge-2.3.tar.gz
-    tar -zxvf ngx_cache_purge.tar.gz
-    mv ngx_cache_purge-2.3 ngx_cache_purge
-    rm -f ngx_cache_purge.tar.gz
-
-    wget -O nginx-sticky-module.zip ${download_Url}/src/nginx-sticky-module.zip
-    unzip -o nginx-sticky-module.zip
-    mv nginx-sticky-module nginx_sticky_module
-    rm -f nginx-sticky-module.zip
-
-    # 新增 nginx-rtmp-module
-    wget -O nginx-rtmp-module.zip ${download_Url}/src/nginx-rtmp-module.zip
-    unzip -o nginx-rtmp-module.zip
-    mv nginx-rtmp-module nginx_rtmp_module
-    rm -f nginx-rtmp-module.zip
-    ##################################################################
 
     if [ -z "${GMSSL}" ]; then
         TLSv13_NGINX=$(echo ${nginxVersion} | tr -d '.' | cut -c 1-3)
@@ -811,7 +786,7 @@ Install_Configure() {
     [ -f "/www/server/panel/install/nginx_prepare.sh" ] && . /www/server/panel/install/nginx_prepare.sh
     [ -f "/www/server/panel/install/nginx_configure.pl" ] && ADD_EXTENSION=$(cat /www/server/panel/install/nginx_configure.pl)
     if [ -f "/usr/local/lib/libjemalloc.so" ] && [ -z "${ARM_CHECK}" ] && [ -z "${JEM_CHECK}" ]; then
-        jemallocLD="--with-ld-opt=\"-ljemalloc\""
+        jemallocLD="--with-ld-opt="-ljemalloc""
     fi
 
     if [ "${version}" == "1.8" ]; then
@@ -830,18 +805,15 @@ Install_Configure() {
     elif [ -z "${ARM_CHECK}" ] && [ -f "/usr/local/include/${LUAJIT_INC_PATH}/luajit.h" ]; then
         ENABLE_LUA="--add-module=${Setup_Path}/src/ngx_devel_kit --add-module=${Setup_Path}/src/lua_nginx_module"
     fi
-
-    ENABLE_STICKY="--add-module=${Setup_Path}/src/nginx_sticky_module"
-    if [ "$version" == "1.23" ] || [ "$version" == "1.24" ] || [ "${version}" == "tengine" ] || [ "${version}" == "1.25" ] || [ "${version}" == "1.26" ] || [ "${version}" == "1.27" ]; then
+	
+    ENABLE_STICKY="--add-module=${Setup_Path}/src/nginx-sticky-module"
+	if [ "$version" == "1.23" ] || [ "$version" == "1.24" ] || [ "${version}" == "tengine" ] || [ "${version}" == "openresty" ] || [ "$version" == "1.25" ] || [ "${version}" == "1.26" ] || [ "${version}" == "1.27" ];then
         ENABLE_STICKY=""
-    fi
+	fi
 
-    if [ "$version" == "1.25" ] || [ "${version}" == "1.26" ] || [ "${version}" == "1.27" ]; then
+    if [ "$version" == "1.25" ] || [ "${version}" == "1.26" ] || [ "${version}" == "1.27" ];then
         ENABLE_HTTP3="--with-http_v3_module"
     fi
-
-    # 新增 nginx-rtmp-module 参数
-    ENABLE_RTMP="--add-module=/www/server/nginx/src/nginx_rtmp_module"
 
     name=nginx
     i_path=/www/server/panel/install/$name
@@ -882,10 +854,10 @@ Install_Configure() {
     # 添加优化参数 --with-threads --with-file-aio  --with-cc-opt='-O2 -fPIE --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' --with-ld-opt='-Wl,-E -Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
     # 添加ngx_brotli模块 --add-module=/www/server/nginx/src/ngx_brotli
     # 添加ModSecurity-nginx静态模块 --add-module=/www/server/nginx/owasp/ModSecurity-nginx 如果需要根据官方文档编译成动态模块修改成 --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx 动态模块需要根据官方文档引入.so文件
-    ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --add-module=/www/server/nginx/src/nginx_rtmp_module --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ENABLE_RTMP} ${ADD_EXTENSION} ${i_make_args} 2>&1 | tee /tmp/nginx_config.pl
-    make -j${cpuCore} 2>&1 | tee /tmp/nginx_make.pl
-}
 
+    ./configure --user=www --group=www --with-threads --with-file-aio --with-cc-opt='-O2 -fPIE  -fPIC --param=ssp-buffer-size=4 -fstack-protector -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -march=native -mtune=native' --with-ld-opt='-Wl,-E -flto -march=native -Bsymbolic-functions -fPIE -fPIC -pie -Wl,-z,relro -Wl,-z,now' --prefix=${Setup_Path} ${ENABLE_LUA} --add-module=${Setup_Path}/src/ngx_cache_purge ${ENABLE_STICKY} --with-openssl=${Setup_Path}/src/openssl --with-pcre=pcre-${pcre_version} ${ENABLE_HTTP2} --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-http_auth_request_module --add-module=${Setup_Path}/src/ngx_http_substitutions_filter_module-master --add-module=/www/server/nginx/src/ngx_brotli --add-dynamic-module=/www/server/nginx/owasp/ModSecurity-nginx ${jemallocLD} ${ENABLE_NGX_PAGESPEED} ${ENABLE_HTTP3} ${ADD_EXTENSION} ${i_make_args} 2>&1|tee /tmp/nginx_config.pl
+    make -j${cpuCore} 2>&1|tee /tmp/nginx_make.pl
+}
 Install_Nginx() {
     make install 2>&1|tee /tmp/nginx_install.pl
     ############################### 根据官方文档定义文件权限 #########################################
