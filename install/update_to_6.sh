@@ -80,7 +80,7 @@ install_pack(){
 }
 
 install_python(){
-	curl -Ss --connect-timeout 3 -m 60 https://raw.githubusercontent.com/mzwrt/iloaix/aapanel-6.8.37-setup/main/install/pip_select.sh|bash
+	curl -Ss --connect-timeout 3 -m 60 https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/install/pip_select.sh|bash
 	pyenv_path="/www/server/panel"
     python_bin=$pyenv_path/pyenv/bin/python
 	if [ -f $pyenv_path/pyenv/bin/python ];then
@@ -164,7 +164,7 @@ install_python(){
 	cd ~
 	rm -rf $python_src_path
 	wget -T 5 -O $pyenv_path/pyenv/bin/activate https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/install/activate.panel
-	wget -T 5 -O $pyenv_path/pyenv/pip.txt https://raw.githubusercontent.com/mzwrt/aapanel-6.8.37-backup/main/install/pip.txt
+	wget -T 5 -O $pyenv_path/pyenv/pip.txt https://raw.githubusercontent.com/iloaix/aapanel-6.8.37-setup/main/install/pip.txt
 	ln -sf $pyenv_path/pyenv/bin/pip3.7 $pyenv_path/pyenv/bin/pip
 	ln -sf $pyenv_path/pyenv/bin/python3.7 $pyenv_path/pyenv/bin/python
     ln -sf $pyenv_path/pyenv/bin/pip3.7 /usr/bin/btpip
